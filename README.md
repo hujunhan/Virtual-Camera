@@ -13,6 +13,7 @@ You can set the focal length, image resolution and its pose (RPY and XYZ) (in Wo
 ## Environment
 
 Python 3
+
 Numpy
 
 ## Usage
@@ -23,3 +24,11 @@ You just need to
 
 1. initiate a camera instance
 2. Use the camera to project some points in world space to the pixel space
+
+## Playground
+
+I write a simple GUI example to show how the code works, and you can play with it. 
+
+![](image/playground.jpg)
+
+Try to move the trackbar and make the projected circle match the image!
