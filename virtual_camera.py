@@ -18,13 +18,17 @@ class VirtualCamera:
         self.RT_world_in_camera = np.zeros((4, 4))
         self.update()
 
-    def look_at(self, vector):
+    def look_at(self, point):
         origin = np.asarray([0, 0, 1])
-        vector = np.asarray(vector)
+        point = np.asarray(point)
+        camera_xyz = np.asarray([self.Tx, self.Ty, self.Tz])
+        vector = point - camera_xyz
         vector_norm = vector / np.linalg.norm(vector)
         axis = np.cross(vector_norm, origin)
         angle = np.arccos(np.dot(origin, vector_norm))
-        R1=self.axis_angle_to_rotation_matrix(axis,angle)
+
+        R1 = self.axis_angle_to_rotation_matrix(axis, angle)
+
         T1 = np.array(
             [
                 [1, 0, 0, -self.Tx],
@@ -34,6 +38,7 @@ class VirtualCamera:
             ]
         )
         self.RT_world_in_camera = np.matmul(R1, T1)
+        print(self.RT_world_in_camera)
 
     def axis_angle_to_rotation_matrix(self, axis, angle):
         nx, ny, nz = axis
@@ -45,17 +50,21 @@ class VirtualCamera:
                     ct + nx * nx * (1 - ct),
                     -nz * st + nx * ny * (1 - ct),
                     ny * st + nx * nz * (1 - ct),
+                    0,
                 ],
                 [
                     nz * st + nx * ny * (1 - ct),
                     ct + ny * ny * (1 - ct),
                     -nx * st + ny * nz * (1 - ct),
+                    0,
                 ],
                 [
                     -ny * st + nx * nz * (1 - ct),
                     nx * st + ny * nz * (1 - ct),
                     ct + nz * nz * (1 - ct),
+                    0,
                 ],
+                [0, 0, 0, 1],
             ]
         )
         return res
@@ -170,7 +179,7 @@ class VirtualCamera:
 
 
 if __name__ == "__main__":
-    cam = VirtualCamera(0, np.pi / 2, 0, 1, 2, 3, 0.003, [1000, 1000])
+    cam = VirtualCamera(0, np.pi / 2, 0, -1, 0, 0, 0.003, [1000, 1000])
     print(cam.RT_world_in_camera)
     p = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 0]])
     p = p.reshape(-1, 3)
@@ -178,4 +187,4 @@ if __name__ == "__main__":
     print(ans)
     # Ans should be [[7.45539187e+02 1.24170659e+03 1.00000000e+00]
     # [1.96595426e+02 1.95919429e+03 1.00000000e+00]]
-    cam.look_at([2, 0, 0])
+    cam.look_at([0, 0, 0])
